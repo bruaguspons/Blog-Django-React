@@ -1,32 +1,30 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
-
+import Login from './pages/Login/Login'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import PUBLIC from './routes/public.routes'
+import PRIVATE from './routes/private.routes'
+import { AuthGuard } from './guards/auth.guards'
+import Private from './pages/Private/Private'
+import { Provider } from 'react-redux'
+import store from './redux/storeage'
+import CreateUser from './pages/CrateUser/CreateUser'
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-50 to-cyan-200">
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path={'/'} element={<Navigate to={PRIVATE.PRIVATE} />} />
+            <Route element={<AuthGuard />}>
+              <Route path={PRIVATE.PRIVATE} element={<Private />} />
+            </Route>
+            <Route path={PUBLIC.LOGIN} element={<Login />} />
+            <Route path={PUBLIC.CREATE} element={<CreateUser />} />
+          </Routes>
+        </BrowserRouter>
+      </Provider>
     </div>
   )
 }

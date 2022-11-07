@@ -1,18 +1,16 @@
 from django.db import models
 import uuid
-from category.models import *
-from user.models import *
-from datetime import datetime
-
+from category.models import Category
+from user.models import User
 
 class Blog(models.Model):
-    uuid = models.UUIDField(uuid.uuid4, required=True, unique=True)
-    title = models.CharField(max_length=255, required=True)
-    content = models.TextField()
-    category = models.models.ManyToManyField(
-        "category.Model", verbose_name=(""))
-    publish = models.DateTimeField(default=datetime.now)
-    author=models.models.ForeignKey("user.Model", verbose_name=(""), on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4)
+    author=models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+    title = models.CharField(max_length=255, blank=True)
+    content = models.TextField(blank=True)
+    category = models.ManyToManyField(Category)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['title']
