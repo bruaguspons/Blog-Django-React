@@ -18,6 +18,7 @@ class CategoryView(APIView):
         else:
             return Response({"error": "Categories not Found"}, status=status.HTTP_404_NOT_FOUND)
 
+
 class GetBlogsInCategory(APIView):
     def get(self, request, cate):
         # query =[]

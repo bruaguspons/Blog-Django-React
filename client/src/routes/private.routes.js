@@ -1,5 +1,8 @@
 const PRIVATE = {
-    PRIVATE: '/private'
+    PRIVATE: 'private',
+    HOME: 'home',
+    PROFILE: 'profile',
+    CREATEBLOG: 'createblog'
 }
 
 export default PRIVATE

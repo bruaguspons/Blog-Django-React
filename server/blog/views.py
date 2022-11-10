@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Blog
+from user.models import User
 from .serializers import BlogSerializer
 
 
@@ -12,6 +13,22 @@ class BlogsView(APIView):
             blogs = BlogSerializer(Blog.objects.all().order_by('-modified'), many=True)
             return Response(blogs.data)
         return Response({'message': 'funca'}, status=status.HTTP_418_IM_A_TEAPOT)
+    
+    def post(self, request, fromat=None):
+        data = User.objects.get(id=request.data.get('author'))
+        title = request.data.get('title')
+        content = request.data.get('content')
+        new_blog = BlogSerializer(author=data, title=title, content=content)
+        print(new_blog)
+        # print(new_blog.data, id_user)
+
+        return Response({'msg': 'todo mal'})
+        # if new_blog.is_valid():
+        #     new_blog.save()
+        #     return Response(new_blog.data, status=status.HTTP_201_CREATED)
+        # else:
+        #     return Response({'error': new_blog.error_messages}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SingleBlogView(APIView):
     def get(self, request, pk):

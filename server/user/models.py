@@ -6,9 +6,9 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 class userManager(BaseUserManager):
     use_in_migrations: True
     def create_user(self, name, email, password=None):
-        if not email:
+        if not email or email =='':
             raise ValueError('Users must have an email')
-        if not name:
+        if not name or name=='':
             raise ValueError("Users must have names")
         
         email = self.normalize_email(email)
@@ -17,14 +17,6 @@ class userManager(BaseUserManager):
         user.set_password(password)
         user.save(useing=self._db)
         return user
-
-    def create_superuser(self, name, email, password=None):
-        if not email:
-            raise ValueError('superUser must have an email')
-        if not name:
-            raise ValueError("superUser must have names")
-        email = self.normalize_email(email)
-        name = name.strip()
 
 class User(AbstractBaseUser):
     name = models.CharField(max_length=255)

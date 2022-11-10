@@ -1,7 +1,9 @@
 import React from 'react'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Card from '../../components/Card'
+import { createUser } from '../../redux/state/User'
 import PRIVATE from '../../routes/private.routes'
 
 const emptyUser = {
@@ -11,6 +13,7 @@ const emptyUser = {
 }
 
 function CreateUser() {
+    const dispatcher = useDispatch()
     const navigate = useNavigate()
     const [user, setUser] = useState(emptyUser)
 
@@ -22,12 +25,14 @@ function CreateUser() {
             headers: { 'Content-Type': 'application/json' }
         })
         const msg = await query.json()
-        console.log(query.status)
         if (query.status === 400) {
-            console.log(msg)
             setUser(emptyUser)
             e.target.reset()
-        } else navigate(PRIVATE.PRIVATE)
+        } else {
+            dispatcher(createUser({ token: msg.token }))
+            console.log(msg)
+            navigate(PRIVATE.PRIVATE, { replace: true })
+        }
     }
 
     const handleChange = (e) => {
