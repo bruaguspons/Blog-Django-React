@@ -5,7 +5,7 @@ from user.models import User
 
 class Blog(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4)
-    author=models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", blank=True)
+    author=models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", blank=True, null=True)
     title = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=True)
     category = models.ManyToManyField(Category, blank=True)

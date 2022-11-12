@@ -1,7 +1,7 @@
 const PRIVATE = {
     PRIVATE: 'private',
     HOME: 'home',
-    PROFILE: 'profile',
+    CATEGORY: 'category',
     CREATEBLOG: 'createblog'
 }
 

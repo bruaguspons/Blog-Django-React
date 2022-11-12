@@ -1,7 +1,13 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import PRIVATE from '../../../../routes/private.routes';
+import { UseBlogContext } from '../context/blogContext';
 
 function Blog({ blog }) {
+
+    const navigate = useNavigate()
+    const { blogs, setBlogs } = UseBlogContext()
 
     const dateDiff = (date) => {
         const date1 = new Date(date);
@@ -18,7 +24,26 @@ function Blog({ blog }) {
         if (diffsec) return diffsec + " sec ago"
     }
     const user = useSelector(state => state.user)
-    // console.log(user)
+
+    const handleclickDelete = async (pk) => {
+        const req = await fetch(`http://localhost:8000/blogs/${pk}`, {
+            method: "DELETE"
+        })
+        if (req.status === 202) {
+            const blog_deleted = blogs.filter(blog => blog.uuid !== pk)
+            setBlogs(blog_deleted)
+        }
+    }
+
+    const handleClickUpdate = async (pk) => {
+        const req = await fetch(`http://localhost:8000/blogs/${pk}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify()
+
+        })
+    }
+
     return (
         <div className='w-2/3 text-white bg-gradient-to-r from-orange-300 to-amber-500 border-4 border-amber-900 rounded-xl'>
             <div className='relative flex ml-4 text-black'>
@@ -47,8 +72,8 @@ function Blog({ blog }) {
             {
                 (user.id == blog.author.id) &&
                 <div className='flex justify-evenly '>
-                    <button className='bg-amber-800 rounded-xl mb-2 py-2 px-4 hover:bg-amber-700'>Delete</button>
-                    <button className='bg-amber-800 rounded-xl mb-2 py-2 px-4 hover:bg-amber-700'>Modify</button>
+                    <button className='bg-amber-800 rounded-xl mb-2 py-2 px-4 hover:bg-amber-700' onClick={() => handleclickDelete(blog.uuid)}>Delete</button>
+                    <button className='bg-amber-800 rounded-xl mb-2 py-2 px-4 hover:bg-amber-700' onClick={() => navigate(`/${PRIVATE.PRIVATE}/${PRIVATE.CREATEBLOG}?id=${blog.uuid}`, { replace: true })}>Modify</button>
                 </div>
             }
         </div>

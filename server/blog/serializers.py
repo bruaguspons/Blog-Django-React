@@ -6,9 +6,9 @@ from user.serializer import UserSerializer
 
 
 class BlogSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=True)
+    category = CategorySerializer(many=True, read_only=True)
     
-    author = UserSerializer()
+    author = UserSerializer(read_only=True)
     class Meta:
         model = Blog
         fields = [

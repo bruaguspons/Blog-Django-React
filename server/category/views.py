@@ -17,6 +17,13 @@ class CategoryView(APIView):
             return Response(cats.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({"error": "Categories not Found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    def post(self, request, *args, **kwargs):
+        cate = CategorySerializer(data=request.data)
+        if cate.is_valid():
+            cate.save()
+            return Response(cate.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetBlogsInCategory(APIView):

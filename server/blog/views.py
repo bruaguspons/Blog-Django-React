@@ -1,28 +1,46 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils.timezone import now
+
+
 from .models import Blog
-from user.models import User
 from .serializers import BlogSerializer
 
+from user.models import User
+from category.models import Category
 
 class BlogsView(APIView):
     def get(self, request, format=None):
         if Blog.objects.all().exists() :
-            blogs = BlogSerializer(Blog.objects.all().order_by('-modified'), many=True)
-            return Response(blogs.data)
+            blogs = Blog.objects.all().order_by('-modified')
+            serializer = BlogSerializer(blogs, many=True)
+            return Response(serializer.data)
         return Response({'message': 'funca'}, status=status.HTTP_418_IM_A_TEAPOT)
     
     def post(self, request, fromat=None):
-        data = User.objects.get(id=request.data.get('author'))
-        title = request.data.get('title')
-        content = request.data.get('content')
-        new_blog = BlogSerializer(author=data, title=title, content=content)
-        print(new_blog)
+        data = request.data
+        
+        try:
+            user = User.objects.get(id=data.get('author'))
+            title = request.data.get('title')
+            content = request.data.get('content')
+            new_blog = Blog.objects.create(author=user, title=title, content=content)
+            new_blog.save()
+            
+            for id in data['category']:
+                    cate_blog = Category.objects.get(id=id)
+                    new_blog.category.add(cate_blog)
+
+            data = BlogSerializer(new_blog).data
+                
+            return Response(data)
+        except:
+            return Response({'msg': 'todo mal'})
+        # print(new_blog)
         # print(new_blog.data, id_user)
 
-        return Response({'msg': 'todo mal'})
         # if new_blog.is_valid():
         #     new_blog.save()
         #     return Response(new_blog.data, status=status.HTTP_201_CREATED)
@@ -31,14 +49,45 @@ class BlogsView(APIView):
 
 
 class SingleBlogView(APIView):
-    def get(self, request, pk):
-        try:
-            data = Blog.objects.get(uuid=pk)
+    def get(self, request, pk=None):
+        if pk is not None:
+            data = get_object_or_404(Blog, uuid=pk)
             blog = BlogSerializer(data)
             return Response(blog.data)
-        except:
-            return Response({'error': 'blog not found',
+        
+        return Response({'error': 'blog not found',
             "pk":pk}, status=status.HTTP_404_NOT_FOUND)
+    def delete(self, request, pk=None):
+        
+        if pk is not None:
+            blog = get_object_or_404(Blog, uuid=pk)
+            blog.delete()
+            return Response(status=status.HTTP_202_ACCEPTED)
+        
+        return Response({'error': 'blog not found',
+            "pk":pk}, status=status.HTTP_404_NOT_FOUND)
+    
+    def put(self, request, pk=None):
+        if pk is not None:
+            data = request.data
+            blog = get_object_or_404(Blog, uuid=pk)
+            blog.title = data.get('title') or blog.title
+            blog.content = data.get('content') or blog.content
+            
+            if data.get('category') is not None:
+                blog.category.clear()
+                for id in data['category']:
+                    cate_blog = Category.objects.get(id=id)
+                    blog.category.add(cate_blog)
+
+            blog.modified = now()
+            blog.save()
+            serializer = BlogSerializer(blog).data
+            return Response(serializer, status=status.HTTP_202_ACCEPTED)
+        
+        return Response({'error': 'blog not found',
+            "pk":pk}, status=status.HTTP_404_NOT_FOUND)
+
 
 class GetUserBlogs(APIView):
     def get(self, request,pk):
@@ -48,3 +97,12 @@ class GetUserBlogs(APIView):
             return Response(data=blogs.data, status=status.HTTP_202_ACCEPTED)
         except:
             return Response({'error': 'user not found'},status=status.HTTP_404_NOT_FOUND)
+
+class SerchBlog(APIView):
+    def get(self, request, title=None, format=None):
+        if title is not None:
+            blogs = Blog.objects.filter(title__contains=title).order_by('-modified')
+            serializer = BlogSerializer(blogs, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({'message': 'funca'}, status=status.HTTP_418_IM_A_TEAPOT)
