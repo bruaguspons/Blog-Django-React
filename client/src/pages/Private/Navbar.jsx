@@ -1,12 +1,15 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import PRIVATE from '../../routes/private.routes'
 import { useDispatch, useSelector } from 'react-redux'
 import { createSearch } from '../../redux/state/Search'
 import { useState } from 'react'
+import PUBLIC from '../../routes/public.routes'
+import { resetUser } from '../../redux/state/User'
 function Navbar() {
     const [serchWord, setSearchWord] = useState('')
     const user = useSelector(state => state.user)
+    const navigate = useNavigate()
     const dispatcher = useDispatch()
 
     const handleChange = (e) => {
@@ -48,6 +51,15 @@ function Navbar() {
                     <li>
                         <NavLink to={PRIVATE.CREATEBLOG}><button className='h-5 '>New Blog</button></NavLink>
                     </li>
+                    <li>
+                        <button className='h-5 ' onClick={() => {
+
+                            dispatcher(resetUser())
+                            navigate(`${PUBLIC.LOGIN}`, { replace: true })
+                        }
+                        }>Logout</button>
+                    </li>
+
                 </ul>
             </div>
         </nav >

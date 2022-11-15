@@ -15,7 +15,7 @@ class UserView(APIView):
         if new_user.is_valid():
             new_user.save()
             token = Token.objects.create(user_id=new_user.data.get('id'))
-            return Response(data={'token': token.key}, status=status.HTTP_201_CREATED)
+            return Response(data={'token': token.key, 'name': new_user.data.get('name'), 'email': new_user.data.get('email'), 'id': new_user.data.get('id')}, status=status.HTTP_201_CREATED)
         else: 
             return Response(data=new_user.errors, status=status.HTTP_400_BAD_REQUEST)
 

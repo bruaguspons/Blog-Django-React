@@ -24,14 +24,14 @@ function CreateUser() {
             body: JSON.stringify(user),
             headers: { 'Content-Type': 'application/json' }
         })
-        const msg = await query.json()
         if (query.status === 400) {
             setUser(emptyUser)
             e.target.reset()
         } else {
-            dispatcher(createUser({ token: msg.token }))
+            const msg = await query.json()
+            dispatcher(createUser({ token: msg.token, name: msg.name, emial: msg.email, id: msg.id }))
             console.log(msg)
-            navigate(PRIVATE.PRIVATE, { replace: true })
+            navigate(`/${PRIVATE.PRIVATE}`, { replace: true })
         }
     }
 

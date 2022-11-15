@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate, useNavigation } from 'react-router-dom'
 import Card from '../../components/Card'
@@ -7,8 +7,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import PRIVATE from '../../routes/private.routes'
 import { modifyUser } from '../../redux/state/User'
 function Login() {
+
+    const emptyUser = {
+        email: '',
+        password: ''
+    }
     const { token } = useSelector(state => state.user)
     const dispatcher = useDispatch()
+    const [user, setUser] = useState(emptyUser)
+
+
     const getLogin = async () => {
         const query = await fetch('http://localhost:8000/user/login', {
             method: 'GET',
