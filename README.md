@@ -24,5 +24,3 @@ py manage.py runserver
 npm install 
 npm run dev
 ```
-
-For a better experience you should run the file "fakeData.js" on server, this will create 10 fake users.
