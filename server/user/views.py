@@ -30,7 +30,7 @@ class GetUser(APIView):
         user = UserSerializer(data)
         return Response(user.data)
     
-    def post(self, request,pk):
+    def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
 

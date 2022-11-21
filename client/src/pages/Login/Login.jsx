@@ -37,7 +37,7 @@ function Login() {
     }, [])
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const query2 = await fetch('http://localhost:8000/user/login', {
+        const query2 = await fetch('http://localhost:8000/user/login/', {
             method: 'POST',
             body: JSON.stringify(user),
             headers: { 'Content-Type': 'application/json' }
@@ -47,7 +47,7 @@ function Login() {
             e.target.reset()
         } else {
             const meg2 = await query2.json()
-            console.log(meg2)
+            dispatcher(modifyUser(meg2))
             navigate(`/${PRIVATE.PRIVATE}`, { replace: true })
         }
     }

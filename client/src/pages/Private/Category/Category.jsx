@@ -26,6 +26,14 @@ function Category() {
     const handleChange = (e) => {
         setTitle(e.target.value)
     }
+    const handleClick = async (title) => {
+        const res = await fetch('http://localhost:8000/category/blogs/', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ category: title })
+        })
+    }
+
     return (
         <div className='w-full flex flex-col items-center'>
             <h2 className='text-4xl'>Categories:</h2>
@@ -33,9 +41,9 @@ function Category() {
                 {
                     loading ? <div className='absolute top-0 bottom-0 left-0 right-0 m-auto w-max h-max'><Spinner /></div> :
                         cate.map(cate => (
-                            <div key={cate.id} className=' flex items-center h-32 w-32 text-black font-bold justify-center bg-gradient-to-r from-orange-300 to-amber-500 border-4 border-amber-900 rounded-xl m-4'>
+                            <button key={cate.id} onClick={() => handleClick(cate.title)} className=' flex items-center h-32 w-32 text-black font-bold justify-center bg-gradient-to-r from-orange-300 to-amber-500 border-4 border-amber-900 rounded-xl m-4'>
                                 {cate.title}
-                            </div>
+                            </button>
                         ))
                 }
             </div>

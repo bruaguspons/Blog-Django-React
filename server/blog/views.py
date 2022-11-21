@@ -10,14 +10,18 @@ from .serializers import BlogSerializer
 
 from user.models import User
 from category.models import Category
+from .pagination import MediumSetPagination
 
 class BlogsView(APIView):
     def get(self, request, format=None):
-        if Blog.objects.all().exists() :
+        # if Blog.objects.all().exists() :
             blogs = Blog.objects.all().order_by('-modified')
-            serializer = BlogSerializer(blogs, many=True)
-            return Response(serializer.data)
-        return Response({'message': 'funca'}, status=status.HTTP_418_IM_A_TEAPOT)
+            pagination = MediumSetPagination()
+            res = pagination.paginate_queryset(blogs, request)
+            serializer = BlogSerializer(res, many=True)
+            # print(serializer)
+            return pagination.get_paginated_response(serializer.data)
+        # return Response({'message': 'blogs not found'}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, fromat=None):
         data = request.data

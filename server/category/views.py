@@ -27,8 +27,9 @@ class CategoryView(APIView):
 
 
 class GetBlogsInCategory(APIView):
-    def get(self, request, cate):
+    def post(self, request):
         # query =[]
+            cate = request.data.get('category')
             query=Blog.objects.filter(category__contains=cate)
             # for b in Blog.objects.all().values():
             #     print(b)
